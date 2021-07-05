@@ -1,0 +1,2 @@
+module Users::PrivateApiKeysHelper
+end
