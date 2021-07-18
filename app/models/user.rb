@@ -6,6 +6,8 @@ class User < ApplicationRecord
 
   before_create :set_private_api_key
 
+  has_many :posts, dependent: :destroy
+
   validates :private_api_key, uniqueness: true 
 
   private
