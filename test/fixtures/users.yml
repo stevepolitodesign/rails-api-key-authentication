@@ -7,4 +7,4 @@
 one:
   email: $LABEL@example.com
   encrypted_password: <%= Devise::Encryptor.digest(User, 'password') %>
-  private_api_key_ciphertext: <%= SecureRandom.hex %>
+  private_api_key_ciphertext: <%= User.generate_private_api_key_ciphertext("secret").inspect %>
