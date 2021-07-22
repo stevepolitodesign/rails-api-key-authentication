@@ -1,7 +1,7 @@
 require "test_helper"
 
 class UserTest < ActiveSupport::TestCase
-  def setup
+  setup  do
     @user = User.new(email: "unique_email@example.com", password: "password")
   end 
 
@@ -12,7 +12,9 @@ class UserTest < ActiveSupport::TestCase
   test "set_private_api_key" do
     assert_nil @user.private_api_key
     @user.save
+    byebug
     assert_not_nil @user.private_api_key
+    assert_not_nil @user.private_api_key_bidx
   end
 
   test "private_api_key should be unique" do
