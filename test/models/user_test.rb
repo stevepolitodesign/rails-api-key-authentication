@@ -24,7 +24,7 @@ class UserTest < ActiveSupport::TestCase
 
   test "should destroy associated requests" do
     @user.save
-    @user.requests.create(method: :get, requestable: posts(:one))
+    @user.requests.create(method: :get, requestable_type: "Post")
     assert_difference("Request.count", -1) do
       @user.destroy
     end 

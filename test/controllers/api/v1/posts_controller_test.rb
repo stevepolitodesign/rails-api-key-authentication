@@ -44,11 +44,13 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
     end
 
     test "should handle errors on create" do
-      assert_no_difference(["Post.count", "Request.count"]) do
-        post api_v1_posts_path, headers: { "Authorization": "Token token=#{@user_one.private_api_key}" }, params: { post: { title: nil, body: nil }  }
-        assert_equal "application/json; charset=utf-8", @response.content_type
-        assert_match "message", @response.body
-        assert_response :unprocessable_entity
+      assert_no_difference("Post.count") do
+        assert_difference("Request.count", 1) do
+          post api_v1_posts_path, headers: { "Authorization": "Token token=#{@user_one.private_api_key}" }, params: { post: { title: nil, body: nil }  }
+          assert_equal "application/json; charset=utf-8", @response.content_type
+          assert_match "message", @response.body
+          assert_response :unprocessable_entity
+        end
       end      
     end
 
