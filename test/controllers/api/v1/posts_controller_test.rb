@@ -11,17 +11,21 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
 
   class Authenticated < Api::V1::PostsControllerTest
     test "should get posts" do
-      get api_v1_posts_path, headers: { "Authorization": "Token token=#{@user_one.private_api_key}" }
-      assert_equal "application/json; charset=utf-8", @response.content_type
-      assert_match  @user_one_post.title, @response.body
-      assert_response :ok
+      assert_difference("Request.count", 1) do
+        get api_v1_posts_path, headers: { "Authorization": "Token token=#{@user_one.private_api_key}" }
+        assert_equal "application/json; charset=utf-8", @response.content_type
+        assert_match  @user_one_post.title, @response.body
+        assert_response :ok
+      end
     end
 
     test "should get post" do
-      get api_v1_post_path(@user_one_post), headers: { "Authorization": "Token token=#{@user_one.private_api_key}" }
-      assert_equal "application/json; charset=utf-8", @response.content_type
-      assert_match  @user_one_post.title, @response.body
-      assert_response :ok
+      assert_difference("Request.count", 1) do
+        get api_v1_post_path(@user_one_post), headers: { "Authorization": "Token token=#{@user_one.private_api_key}" }
+        assert_equal "application/json; charset=utf-8", @response.content_type
+        assert_match  @user_one_post.title, @response.body
+        assert_response :ok
+      end
     end
 
     test "should handle 404" do
@@ -56,17 +60,21 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
     end
 
     test "should handle errors on update" do
-      put api_v1_post_path(@user_one_post), headers: { "Authorization": "Token token=#{@user_one.private_api_key}" }, params: { post: { title: nil }  }
-      assert_equal "application/json; charset=utf-8", @response.content_type
-      assert_match "message", @response.body
-      assert_response :unprocessable_entity
+      assert_difference("Request.count", 1) do
+        put api_v1_post_path(@user_one_post), headers: { "Authorization": "Token token=#{@user_one.private_api_key}" }, params: { post: { title: nil }  }
+        assert_equal "application/json; charset=utf-8", @response.content_type
+        assert_match "message", @response.body
+        assert_response :unprocessable_entity
+      end
     end
 
     test "should delete post" do
-      assert_difference(["Post.count", "Request.count"], -1) do
-        delete api_v1_post_path(@user_one_post), headers: { "Authorization": "Token token=#{@user_one.private_api_key}" }
-        assert_equal "application/json; charset=utf-8", @response.content_type
-        assert_response :ok
+      assert_difference(["Post.count"], -1) do
+        assert_difference("Request.count", 1) do
+          delete api_v1_post_path(@user_one_post), headers: { "Authorization": "Token token=#{@user_one.private_api_key}" }
+          assert_equal "application/json; charset=utf-8", @response.content_type
+          assert_response :ok
+        end
       end
     end
   end
@@ -89,7 +97,7 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
       assert_response :unauthorized
     end
 
-    test "should delete another's post" do
+    test "should not delete another's post" do
       assert_no_difference(["Post.count", "Request.count"]) do
         delete api_v1_post_path(@user_two_post), headers: { "Authorization": "Token token=#{@user_one.private_api_key}" }
         assert_equal "application/json; charset=utf-8", @response.content_type
