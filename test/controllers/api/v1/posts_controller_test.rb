@@ -23,6 +23,12 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
       assert_match  @user_one_post.title, @response.body
       assert_response :ok
     end
+
+    test "should handle 404" do
+      get api_v1_post_path("does_not_exis"), headers: { "Authorization": "Token token=#{@user_one.private_api_key}" }
+      assert_equal "application/json; charset=utf-8", @response.content_type
+      assert_response :not_found
+    end
   end
 
   class Unauthorized < Api::V1::PostsControllerTest
