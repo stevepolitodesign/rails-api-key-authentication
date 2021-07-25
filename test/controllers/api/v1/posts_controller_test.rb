@@ -60,7 +60,15 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
       assert_equal "application/json; charset=utf-8", @response.content_type
       assert_match "message", @response.body
       assert_response :unprocessable_entity
-    end    
+    end
+
+    test "should delete post" do
+      assert_difference("Post.count", -1) do
+        delete api_v1_post_path(@user_one_post), headers: { "Authorization": "Token token=#{@user_one.private_api_key}" }
+        assert_equal "application/json; charset=utf-8", @response.content_type
+        assert_response :ok
+      end
+    end
   end
 
   class Unauthorized < Api::V1::PostsControllerTest
@@ -79,7 +87,15 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
       put api_v1_post_path(@user_two_post), headers: { "Authorization": "Token token=#{@user_one.private_api_key}" }, params: { post: { title: "updated" }  }
       assert_equal "application/json; charset=utf-8", @response.content_type
       assert_response :unauthorized
-    end    
+    end
+
+    test "should delete another's post" do
+      assert_no_difference("Post.count") do
+        delete api_v1_post_path(@user_two_post), headers: { "Authorization": "Token token=#{@user_one.private_api_key}" }
+        assert_equal "application/json; charset=utf-8", @response.content_type
+        assert_response :unauthorized
+      end
+    end
   end
 
 end

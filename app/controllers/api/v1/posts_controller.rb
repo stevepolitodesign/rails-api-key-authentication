@@ -1,6 +1,6 @@
 class Api::V1::PostsController < Api::V1::BaseController
-  before_action :set_post, only: [:show, :update] 
-  before_action :authorize_post, only: [:show, :update]
+  before_action :set_post, only: [:show, :update, :destroy] 
+  before_action :authorize_post, only: [:show, :update, :destroy]
 
   def index
     @posts = @user.posts
@@ -24,7 +24,12 @@ class Api::V1::PostsController < Api::V1::BaseController
     else
       render json: { message: @post.errors.full_messages }, status: :unprocessable_entity
     end
-  end  
+  end
+
+  def destroy
+    @post.destroy
+    render :show, status: :ok
+  end
 
   private
 
