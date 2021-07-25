@@ -39,7 +39,7 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
       end
     end
 
-    test "should handle errors" do
+    test "should handle errors on create" do
       assert_no_difference("Post.count") do
         post api_v1_posts_path, headers: { "Authorization": "Token token=#{@user_one.private_api_key}" }, params: { post: { title: nil, body: nil }  }
         assert_equal "application/json; charset=utf-8", @response.content_type
@@ -47,6 +47,20 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
         assert_response :unprocessable_entity
       end      
     end
+
+    test "should update post" do
+      put api_v1_post_path(@user_one_post), headers: { "Authorization": "Token token=#{@user_one.private_api_key}" }, params: { post: { title: "updated" }  }
+      assert_equal "application/json; charset=utf-8", @response.content_type
+      assert_match  "updated", @response.body
+      assert_response :ok
+    end
+
+    test "should handle errors on update" do
+      put api_v1_post_path(@user_one_post), headers: { "Authorization": "Token token=#{@user_one.private_api_key}" }, params: { post: { title: nil }  }
+      assert_equal "application/json; charset=utf-8", @response.content_type
+      assert_match "message", @response.body
+      assert_response :unprocessable_entity
+    end    
   end
 
   class Unauthorized < Api::V1::PostsControllerTest
@@ -60,6 +74,12 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
       assert_equal "application/json; charset=utf-8", @response.content_type
       assert_response :unauthorized
     end
+
+    test "should not update another's post" do
+      put api_v1_post_path(@user_two_post), headers: { "Authorization": "Token token=#{@user_one.private_api_key}" }, params: { post: { title: "updated" }  }
+      assert_equal "application/json; charset=utf-8", @response.content_type
+      assert_response :unauthorized
+    end    
   end
 
 end
