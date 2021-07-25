@@ -1,4 +1,4 @@
 class Request < ApplicationRecord
   belongs_to :user
-  belongs_to :record, polymorphic: true
+  belongs_to :requestable, polymorphic: true
 end

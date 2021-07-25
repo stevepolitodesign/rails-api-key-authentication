@@ -2,12 +2,12 @@
 
 one:
   user: one
-  record: one
-  record_type: Record
-  method: MyString
+  requestable: one
+  requestable_type: Requestable
+  method: 1
 
 two:
   user: two
-  record: two
-  record_type: Record
-  method: MyString
+  requestable: two
+  requestable_type: Requestable
+  method: 1
