@@ -24,11 +24,9 @@ ActiveRecord::Schema.define(version: 2021_07_25_211028) do
   create_table "requests", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "requestable_type", null: false
-    t.integer "requestable_id", null: false
     t.integer "method", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["requestable_type", "requestable_id"], name: "index_requests_on_requestable"
     t.index ["user_id"], name: "index_requests_on_user_id"
   end
 

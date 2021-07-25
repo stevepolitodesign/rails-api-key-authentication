@@ -2,12 +2,10 @@
 
 one:
   user: one
-  requestable: one
-  requestable_type: Requestable
+  requestable_type: Post
   method: 1
 
 two:
   user: two
-  requestable: two
-  requestable_type: Requestable
+  requestable_type: Post
   method: 1

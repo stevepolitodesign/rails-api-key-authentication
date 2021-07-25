@@ -3,8 +3,7 @@ require "test_helper"
 class RequestTest < ActiveSupport::TestCase
   setup do
     @user = users(:one)
-    @post = posts(:one)
-    @request = @user.requests.build(method: :get, requestable: @post)
+    @request = @user.requests.build(method: :get, requestable_type: "Post")
   end
 
   test "should be valid" do
@@ -16,8 +15,13 @@ class RequestTest < ActiveSupport::TestCase
     assert_not @request.valid?
   end
 
-  test "should have requestable" do
-    @request.requestable = nil
+  test "should have requestable_type" do
+    @request.requestable_type = nil
+    assert_not @request.valid?
+  end
+
+  test "requestable_type should be constrained" do
+    @request.requestable_type = "User"
     assert_not @request.valid?
   end
 

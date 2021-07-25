@@ -6,7 +6,6 @@ class User < ApplicationRecord
 
   devise :database_authenticatable, :registerable,
   :recoverable, :rememberable, :validatable
-  
 
   before_create :set_private_api_key
 
