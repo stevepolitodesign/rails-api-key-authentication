@@ -4,7 +4,7 @@ class Api::V1::BaseController < ApplicationController
   private
 
     def authenticate
-      authenticate_user_with_token || handle_unauthorized
+      authenticate_user_with_token || handle_bad_authentication
     end
 
     # https://github.com/rails/rails/blob/83217025a171593547d1268651b446d3533e2019/actionpack/lib/action_controller/metal/http_authentication.rb#L352
@@ -15,7 +15,7 @@ class Api::V1::BaseController < ApplicationController
       end
     end
 
-    def handle_unauthorized
+    def handle_bad_authentication
       render json: { message: "Bad credentials" }, status: 401
     end
 end
