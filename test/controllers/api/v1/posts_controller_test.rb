@@ -12,7 +12,8 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
   class Authenticated < Api::V1::PostsControllerTest
     test "should get posts" do
       get api_v1_posts_path, headers: { "Authorization": "Token token=#{@user_one.private_api_key}" }
-      assert_equal  @user_one.posts.count, @response.parsed_body.size
+      assert_equal "application/json; charset=utf-8", @response.content_type
+      assert_match  @user_one_post.title, @response.body
       assert_response :ok
     end
 
