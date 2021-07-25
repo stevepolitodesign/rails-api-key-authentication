@@ -12,7 +12,6 @@ class UserTest < ActiveSupport::TestCase
   test "set_private_api_key" do
     assert_nil @user.private_api_key
     @user.save
-    byebug
     assert_not_nil @user.private_api_key
     assert_not_nil @user.private_api_key_bidx
   end
