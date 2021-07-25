@@ -9,6 +9,15 @@ class Api::V1::PostsController < Api::V1::BaseController
   def show
   end
 
+  def create
+    @post = @user.posts.build(post_params)
+    if @post.save
+      render :show, status: :created
+    else
+      render json: { message: @post.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
   private
 
     def set_post
@@ -17,5 +26,9 @@ class Api::V1::PostsController < Api::V1::BaseController
 
     def authorize_post
       render json: { message: "Unauthorized" }, status: :unauthorized unless @user == @post.user
+    end
+
+    def post_params
+      params.require(:post).permit(:title, :body)
     end
 end

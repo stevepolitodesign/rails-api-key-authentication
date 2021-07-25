@@ -29,6 +29,24 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
       assert_equal "application/json; charset=utf-8", @response.content_type
       assert_response :not_found
     end
+
+    test "should create post" do
+      assert_difference("Post.count", 1) do
+        post api_v1_posts_path, headers: { "Authorization": "Token token=#{@user_one.private_api_key}" }, params: { post: { title: "title", body: "body" }  }
+        assert_equal "application/json; charset=utf-8", @response.content_type
+        assert_match  "title", @response.body
+        assert_response :created
+      end
+    end
+
+    test "should handle errors" do
+      assert_no_difference("Post.count") do
+        post api_v1_posts_path, headers: { "Authorization": "Token token=#{@user_one.private_api_key}" }, params: { post: { title: nil, body: nil }  }
+        assert_equal "application/json; charset=utf-8", @response.content_type
+        assert_match "message", @response.body
+        assert_response :unprocessable_entity
+      end      
+    end
   end
 
   class Unauthorized < Api::V1::PostsControllerTest
