@@ -1,26 +1,29 @@
 require "test_helper"
 
 class RequestTest < ActiveSupport::TestCase
-  # test "the truth" do
-  #   assert true
-  # end
+  setup do
+    @user = users(:one)
+    @post = posts(:one)
+    @request = @user.requests.build(method: :get, requestable: @post)
+  end
+
   test "should be valid" do
-    flunk
+    assert @request.valid?
   end
 
   test "should have user" do
-    flunk
+    @request.user = nil
+    assert_not @request.valid?
   end
 
   test "should have requestable" do
-    flunk
+    @request.requestable = nil
+    assert_not @request.valid?
   end
 
   test "should have method" do
-    flunk
+    @request.method = nil
+    assert_not @request.valid?
   end
 
-  test "should have correct http method" do
-    flunk
-  end  
 end
