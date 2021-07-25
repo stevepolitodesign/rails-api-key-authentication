@@ -21,4 +21,8 @@ class UserTest < ActiveSupport::TestCase
     @user_with_duplicate_private_api_key = User.new(email: "another_unique_email@example.com", password: "password", private_api_key: @user.private_api_key)
     assert_not @user_with_duplicate_private_api_key.valid?
   end
+
+  test "should destroy associated requests" do
+    flunk
+  end
 end
