@@ -23,6 +23,10 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "should destroy associated requests" do
-    flunk
+    @user.save
+    @user.requests.create(method: :get, requestable: posts(:one))
+    assert_difference("Request.count", -1) do
+      @user.destroy
+    end 
   end
 end
