@@ -18,7 +18,10 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
     end
 
     test "should get post" do
-      fail
+      get api_v1_post_path(@user_one_post), headers: { "Authorization": "Token token=#{@user_one.private_api_key}" }
+      assert_equal "application/json; charset=utf-8", @response.content_type
+      assert_match  @user_one_post.title, @response.body
+      assert_response :ok
     end
   end
 
@@ -29,7 +32,9 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
     end
 
     test "should not load another's post" do
-      fail
+      get api_v1_post_path(@user_two_post), headers: { "Authorization": "Token token=#{@user_one.private_api_key}" }
+      assert_equal "application/json; charset=utf-8", @response.content_type
+      assert_response :unauthorized
     end
   end
 
