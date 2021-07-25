@@ -12,7 +12,7 @@ class RequestTest < ActiveSupport::TestCase
     flunk
   end
 
-  test "should have record" do
+  test "should have requestable" do
     flunk
   end
 
