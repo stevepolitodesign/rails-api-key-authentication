@@ -7,7 +7,7 @@ bundle add lockbox
 bundle add blind_index
 ```
 
-2. Configure Lockbox for test, development and production environment.
+2. Configure Lockbox for test, development and production environment. You'll want to run the following code for each environment.
 
 ```
 rails c 
@@ -75,3 +75,10 @@ class User < ApplicationRecord
   end
 end
 ```
+
+> **What's Going On Here?**
+>
+> - We use Lockbox as a means to encrypt the private api key because the key is essentially as sensitive as a username and password. If the database were every compromised, the keys would not be stored in plain text. This gem also allows us to reference the column as `private_api_key` and not `private_api_key_ciphertext`
+> - We use Blink Index as a means to query against the key, as well as ensure its value is unique. We need Blink Index because the column is encrypted.
+> - We add a validation ensuring the key is unique. This is because the key will be used to identify a user.
+> - We use [SecureRandom](https://ruby-doc.org/stdlib-3.0.2/libdoc/securerandom/rdoc/SecureRandom.html) to generate a unique value for the key. This is necessary to make it difficult for someone to guess another user's key.
