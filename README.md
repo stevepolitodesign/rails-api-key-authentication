@@ -82,3 +82,63 @@ end
 > - We use Blink Index as a means to query against the key, as well as ensure its value is unique. We need Blink Index because the column is encrypted.
 > - We add a validation ensuring the key is unique. This is because the key will be used to identify a user.
 > - We use [SecureRandom](https://ruby-doc.org/stdlib-3.0.2/libdoc/securerandom/rdoc/SecureRandom.html) to generate a unique value for the key. This is necessary to make it difficult for someone to guess another user's key.
+
+## Allow User to View and Rotate Private API Key
+
+1. Create an endpoint for creating a new key.
+
+```
+rails g controller user/private_api_keys
+```
+
+```ruby
+# app/controllers/user/private_api_keys_controller.rb
+class User::PrivateApiKeysController < ApplicationController
+  before_action :authenticate_user!
+
+  def update
+    if current_user.update(private_api_key: SecureRandom.hex)
+      redirect_to edit_user_registration_path, notice: "API Updated"
+    else
+      redirect_to edit_user_registration_path, alert: "There was an error: #{current_user.errors.full_messages.to_sentence}"
+    end
+  end
+end
+```
+
+2. Update routes.
+
+```ruby
+# config/routes.rb
+Rails.application.routes.draw do
+  namespace :user do
+    resource :private_api_keys, only: :update
+  end
+end
+```
+
+3. Update views.
+
+```
+rails g devise:views
+```
+
+```html+erb
+# app/views/devise/registrations/edit.html.erb
+<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
+...
+<% end %>
+...
+<h3>API Key</h3>
+<%= form_with model: current_user, url: user_private_api_keys_path do |f| %>
+  <%= f.text_field :private_api_key, disabled: true %>
+  <%= f.submit "Generate New Key" %>
+<% end %>
+...
+```
+
+TODO: Add image
+
+> **What's Going On Here?**
+>
+> - 
