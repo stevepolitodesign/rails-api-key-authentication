@@ -219,4 +219,39 @@ end
 > **What's Going On Here?**
 >
 > - We create a [namespaced](https://guides.rubyonrails.org/routing.html#controller-namespaces-and-routing) endpoint to encapsulate and version our API. This is best practice since we'll want to make a new version of our API each time we make changes to it while still maintaining older versions.
+> - We set the [default format](https://guides.rubyonrails.org/routing.html#defining-defaults) to respond with JSON. This means all responses from the API will be sent as JSON.  
 > - We create a base controller that will be inherited by the API. This will make it easy to add shared logic in the API without affecting the web interface.
+
+## Step 5: Authenticate Requests
+
+
+1. Authenticate all requests to the API. 
+
+```ruby
+# app/controllers/api/v1/base_controller.rb
+class Api::V1::BaseController < ApplicationController
+  before_action :authenticate
+
+  private
+
+    def authenticate
+      authenticate_user_with_token || handle_bad_authentication
+    end
+
+    def authenticate_user_with_token
+      authenticate_with_http_token do |token, options|
+        @user ||= User.find_by(private_api_key: token)
+      end
+    end
+
+    def handle_bad_authentication
+      render json: { message: "Bad credentials" }, status: :unauthorized
+    end
+
+end
+```
+
+> **What's Going On Here?**
+>
+> - We use the [authenticate_user_with_token](https://github.com/rails/rails/blob/83217025a171593547d1268651b446d3533e2019/actionpack/lib/action_controller/metal/http_authentication.rb#L352) method that ships with Rails to authenticate all requests to our API with a the user's private API key that will be sent through an [Authorization HTTP header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization). We could pass the private API key via a [querystring](https://en.wikipedia.org/wiki/Query_string), but we would not be able to use authenticate_user_with_token method to find the user which is more secure.
+> - We handle bad requests by responding with a JSON payload containing a simple message and a status of 401. It's our responsibility to response with the correct [HTTP Status Code](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status).
