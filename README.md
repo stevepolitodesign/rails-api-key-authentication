@@ -482,3 +482,9 @@ class Api::V1::PostsController < Api::V1::BaseController
   ...
 end
 ```
+
+```
+User.first.requests.count
+User.first.requests.where(method: :get).count
+User.first.requests.where(method: :get, requestable_type: "Post", created_at: 1.month.ago.beginning_of_day..Time.now.end_of_day).count
+```
