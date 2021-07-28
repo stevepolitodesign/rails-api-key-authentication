@@ -224,7 +224,6 @@ end
 
 ## Step 5: Authenticate Requests
 
-
 1. Authenticate all requests to the API. 
 
 ```ruby
@@ -255,3 +254,41 @@ end
 >
 > - We use the [authenticate_user_with_token](https://github.com/rails/rails/blob/83217025a171593547d1268651b446d3533e2019/actionpack/lib/action_controller/metal/http_authentication.rb#L352) method that ships with Rails to authenticate all requests to our API with a the user's private API key that will be sent through an [Authorization HTTP header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization). We could pass the private API key via a [querystring](https://en.wikipedia.org/wiki/Query_string), but we would not be able to use authenticate_user_with_token method to find the user which is more secure.
 > - We handle bad requests by responding with a JSON payload containing a simple message and a status of 401. It's our responsibility to response with the correct [HTTP Status Code](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status).
+
+## Step 5: Handle Missing Records
+
+1. Handle missing records.
+
+```ruby
+# app/controllers/api/v1/base_controller.rb
+class Api::V1::BaseController < ApplicationController
+  rescue_from ActiveRecord::RecordNotFound, with: :handle_not_found
+
+  before_action :authenticate
+
+  private
+
+    def authenticate
+      authenticate_user_with_token || handle_bad_authentication
+    end
+
+    def authenticate_user_with_token
+      authenticate_with_http_token do |token, options|
+        @user ||= User.find_by(private_api_key: token)
+      end
+    end
+
+    def handle_bad_authentication
+      render json: { message: "Bad credentials" }, status: :unauthorized
+    end
+
+    def handle_not_found
+      render json: { message: "Record not found" }, status: :not_found
+    end
+
+end
+```
+
+> **What's Going On Here?**
+>
+> - We [rescue_from](https://api.rubyonrails.org/classes/ActiveSupport/Rescuable/ClassMethods.html#method-i-rescue_from) any missing record with a custom JSON response. You can think of this as a custom 404 page, but for an API. We make sure to respond with the correct [HTTP Status Code](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status).
