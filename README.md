@@ -255,7 +255,7 @@ end
 > - We use the [authenticate_user_with_token](https://github.com/rails/rails/blob/83217025a171593547d1268651b446d3533e2019/actionpack/lib/action_controller/metal/http_authentication.rb#L352) method that ships with Rails to authenticate all requests to our API with a the user's private API key that will be sent through an [Authorization HTTP header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization). We could pass the private API key via a [querystring](https://en.wikipedia.org/wiki/Query_string), but we would not be able to use authenticate_user_with_token method to find the user which is more secure.
 > - We handle bad requests by responding with a JSON payload containing a simple message and a status of 401. It's our responsibility to response with the correct [HTTP Status Code](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status).
 
-## Step 5: Handle Missing Records
+## Step 6: Handle Missing Records
 
 1. Handle missing records.
 
@@ -292,3 +292,90 @@ end
 > **What's Going On Here?**
 >
 > - We [rescue_from](https://api.rubyonrails.org/classes/ActiveSupport/Rescuable/ClassMethods.html#method-i-rescue_from) any missing record with a custom JSON response. You can think of this as a custom 404 page, but for an API. We make sure to respond with the correct [HTTP Status Code](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status).
+
+## Step 7: Create Response Views
+
+1. Generate response partials with [Jbuilder](https://guides.rubyonrails.org/action_view_overview.html#jbuilder).
+
+```
+rails g jbuilder api/v1/posts user:references title:string body:text --model-name=Post
+```
+
+2. Update paths.
+
+```ruby
+# app/views/api/v1/posts/index.json.jbuilder
+json.array! @posts, partial: "api/v1/posts/post", as: :post
+```
+
+```ruby
+# app/views/api/v1/posts/index.json.jbuilder
+json.partial! "api/v1/posts/post", post: @post
+```
+
+```ruby
+# app/views/api/v1/posts/_post.json.jbuilder
+json.url api_v1_post_url(post, format: :json)
+```
+
+> **What's Going On Here?**
+>
+> - We use [Jbuilder](https://guides.rubyonrails.org/action_view_overview.html#jbuilder) to create the partials our API will respond with. Instead of creating `.html.erb` files, we're simply creating JSON files. We could render the data directly in the `Api::V1::PostsController`, but this keeps our Controller organized and uses Rails conventions.
+
+## Step 8: Create Endpoints
+
+1. 
+
+```ruby
+# app/controllers/api/v1/posts_controller.rb
+class Api::V1::PostsController < Api::V1::BaseController
+  before_action :set_post, only: [:show, :update, :destroy] 
+
+  def index
+    @posts = @user.posts
+  end
+
+  def show
+  end
+
+  def create
+    @post = @user.posts.build(post_params)
+    if @post.save
+      render :show, status: :created
+    else
+      render json: { message: @post.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  def update
+    if @post.update(post_params)
+      render :show, status: :ok
+    else
+      render json: { message: @post.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    @post.destroy
+    render :show, status: :ok
+  end 
+  
+  private
+
+    def set_post
+      @post = Post.find(params[:id])
+    end
+
+    def post_params
+      params.require(:post).permit(:title, :body)
+    end
+end
+```
+
+> **What's Going On Here?**
+>
+> - We create a traditional [Controller](https://guides.rubyonrails.org/action_controller_overview.html) with endpoints to list posts, get a post, update a post, create a post and delete a post.
+> - Since this Controller inherits from `Api::V1::BaseController` all requests will need to be authenticated.
+> - We make sure to always respond with JSON either through our Jbuilder views, or directly in the Controller.
+> - We pass any error message to a `message` key in the JSON response. We don't have to call this key `message`, nor do we have to respond with a message at all, but we want to make out API helpful.
+- > We make sure to always respond with the correct [HTTP Status Code](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status).
