@@ -1,4 +1,7 @@
 class Api::V1::BaseController < ApplicationController
+  # https://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection.html
+  protect_from_forgery with: :null_session
+
   rescue_from ActiveRecord::RecordNotFound, with: :handle_not_found
 
   before_action :authenticate
