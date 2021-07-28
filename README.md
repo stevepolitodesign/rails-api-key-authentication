@@ -379,3 +379,106 @@ end
 > - We make sure to always respond with JSON either through our Jbuilder views, or directly in the Controller.
 > - We pass any error message to a `message` key in the JSON response. We don't have to call this key `message`, nor do we have to respond with a message at all, but we want to make out API helpful.
 - > We make sure to always respond with the correct [HTTP Status Code](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status).
+
+## Step 9: Authorize Requests.
+
+1. Authorize requests
+
+```ruby
+# app/controllers/api/v1/posts_controller.rb
+class Api::V1::PostsController < Api::V1::BaseController
+  ...
+  before_action :authorize_post, only: [:show, :update, :destroy]
+  ...
+  private
+    ...
+    def authorize_post
+      render json: { message: "Unauthorized" }, status: :unauthorized unless @user == @post.user
+    end
+    ...
+end
+```
+
+## Step 10: Log API Requests
+
+1. Create Request Model.
+
+```
+rails g model Request user:references requestable_type:string method:integer
+```
+
+```ruby
+# db/migrate/xxx_create_requests.rb
+class CreateRequests < ActiveRecord::Migration[6.1]
+  def change
+    create_table :requests do |t|
+      t.references :user, null: false, foreign_key: true
+      t.string :requestable_type, null: false
+      t.integer :method, null: false
+
+      t.timestamps
+    end
+  end
+end
+```
+
+2. Associate with User.
+
+```ruby
+# app/models/user.rb
+class User < ApplicationRecord
+  ...
+  has_many :requests, dependent: :destroy
+  ...
+end
+```
+
+3. Validate Model.
+
+```ruby
+# app/models/request.rb
+class Request < ApplicationRecord
+  belongs_to :user
+
+  # ArgumentError: You tried to define an enum named "method" on the model "Request",
+  # but this will generate a class method "delete", which is already defined by Active Record.
+  enum method: [:get, :post, :put, :patch, :delete], _suffix: true
+
+  validates :method, :requestable_type, :user, presence: true
+  validates :requestable_type, inclusion: { in: %w(Post) }
+end
+```
+
+4. Update Controller to Log API requests.
+
+```ruby
+# app/controllers/api/v1/posts_controller.rb
+class Api::V1::PostsController < Api::V1::BaseController
+  ...
+
+  def index
+    ...
+    @user.requests.create(method: :get, requestable_type: "Post")
+  end
+
+  def show
+    @user.requests.create(method: :get, requestable_type: "Post")
+  end
+
+  def create
+    ...
+    @user.requests.create(method: :post, requestable_type: "Post")
+  end
+
+  def update
+    ...
+    @user.requests.create(method: :put, requestable_type: "Post")
+  end
+
+  def destroy
+    ...
+    @user.requests.create(method: :delete, requestable_type: "Post")
+  end 
+  ...
+end
+```
