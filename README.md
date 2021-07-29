@@ -439,6 +439,9 @@ end
 > - By default, Rails protects any request other than a GET request from Cross-Site Request Forgery (CSRF) attacks by including a token in the rendered HTML for your application. However since we're making a request from outside of the application, Rails will raise a `ActionController::InvalidAuthenticityToken` error. 
 > - We add a call to [protect_from_forgery with: :null_session](https://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection.html) to allow for unverified requests to hit our API. 
 
+
+![image of postman create_success]()
+
 ## Step 11: Log API Requests
 
 1. Create Request Model.
@@ -522,6 +525,14 @@ class Api::V1::PostsController < Api::V1::BaseController
   ...
 end
 ```
+
+
+
+> **What's Going On Here?**
+> 
+> - We make model to store all requests made by the User. To make this as flexible as possible we add
+an [enum](https://edgeapi.rubyonrails.org/classes/ActiveRecord/Enum.html) column to store the request method and a requestable_type column to store the class name of the record in the original API request. This will allow us to see exactly what what type of request was made and on what record. This can be helpful if we need to enforce different usage limits for any combination of request method and for applying different API usage  
+
 
 ```
 User.first.requests.count
