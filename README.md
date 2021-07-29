@@ -1,3 +1,6 @@
+![image of api form]()
+![image of responses from postman]()
+
 ## Step 1: Add Encrypted Private API Key Column to Users Table
 
 1. Install [lockbox](https://github.com/ankane/lockbox) and [blind_index](https://github.com/ankane/blind_index).
@@ -137,7 +140,7 @@ rails g devise:views
 ...
 ```
 
-TODO: Add image
+![image of api form]()
 
 > **What's Going On Here?**
 >
@@ -173,6 +176,19 @@ class User < ApplicationRecord
   has_many :posts, dependent: :destroy
   ...
 end
+```
+
+4. Seed data.
+
+```ruby
+# db/seeds.rb
+User.create(email: "user@example.com", password: "password")
+10.times do |i|
+  User.first.posts.create(title: "Post #{i+1}", body: "Body copy")    
+end
+
+
+User.create(email: "another_user@example.com", password: "password")
 ```
 
 ## Step 4: Create API Endpoints
@@ -372,6 +388,9 @@ class Api::V1::PostsController < Api::V1::BaseController
 end
 ```
 
+![image of postman index success]()
+![image of postman index bad api token]()
+
 > **What's Going On Here?**
 >
 > - We create a traditional [Controller](https://guides.rubyonrails.org/action_controller_overview.html) with endpoints to list posts, get a post, update a post, create a post and delete a post.
@@ -399,7 +418,28 @@ class Api::V1::PostsController < Api::V1::BaseController
 end
 ```
 
-## Step 10: Log API Requests
+![image of postman index not authorized]()
+
+## Step 10: Handle Invalid Authenticity Token
+
+![image of postman invalid token]()
+
+1. Update Controller.
+
+```ruby
+# app/controllers/api/v1/base_controller.rb
+class Api::V1::BaseController < ApplicationController
+  protect_from_forgery with: :null_session
+  ...
+end
+```
+
+> **What's Going On Here?**
+> 
+> - By default, Rails protects any request other than a GET request from Cross-Site Request Forgery (CSRF) attacks by including a token in the rendered HTML for your application. However since we're making a request from outside of the application, Rails will raise a `ActionController::InvalidAuthenticityToken` error. 
+> - We add a call to [protect_from_forgery with: :null_session](https://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection.html) to allow for unverified requests to hit our API. 
+
+## Step 11: Log API Requests
 
 1. Create Request Model.
 
