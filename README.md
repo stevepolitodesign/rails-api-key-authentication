@@ -1,10 +1,10 @@
 In this tutorial we'll build a full featured API in Rails with authentication and the ability to monitor requests.
 
-![A form allowing users to view and rotate their private API key](public/images/original/api_key_demo.gif)
+![A form allowing users to view and rotate their private API key](public/images/original/form.png)
 _A form allowing users to view and rotate their private API key_
 
-![Authenticated API Demo](public/images/original/api_demo.gif)
-_A demo of the API_
+![API as viewed from Postman](public/images/original/index_success.png)
+_API as viewed from Postman._
 
 ## Step 1: Add Encrypted Private API Key Column to Users Table
 
