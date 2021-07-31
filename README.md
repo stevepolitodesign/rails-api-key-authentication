@@ -1,4 +1,12 @@
-In this tutorial we'll build a full featured API in Rails with authentication and the ability to monitor requests.
+In this tutorial we'll build a full featured API in Rails with authentication and the ability to monitor usage. Below is what we'll cover.
+
+- Encrypting API keys.
+- Building a form to view and rotate the API key.
+- Versioning our API.
+- Returning the correct HTTP status code.
+- Authorizing requests.
+- Handling missing records.
+- Monitoring API usage.
 
 ![A form allowing users to view and rotate their private API key](public/images/original/form.png)
 _A form allowing users to view and rotate their private API key_
@@ -417,7 +425,7 @@ _A non authenticated request to the index action._
 
 ## Step 9: Authorize Requests.
 
-1. Authorize requests
+1. Authorize requests.
 
 ```ruby
 # app/controllers/api/v1/posts_controller.rb
@@ -436,6 +444,11 @@ end
 
 ![A unauthorized request to the show action](public/images/original/show_un_authorized.png)
 _A unauthorized request to the show action._
+
+> **What's Going On Here?**
+>
+> - We don't want other users to able to view, update or destroy another user's data. We create a simple method to ensure the current user is the same user in the record.
+>   - Note that we don't need to do this for the index or create action, since those actions are already scoped to the user.
 
 ## Step 10: Handle Invalid Authenticity Token
 
