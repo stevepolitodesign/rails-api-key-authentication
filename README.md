@@ -1,4 +1,6 @@
-In this tutorial, we'll build a full-featured API in Rails with authentication and the ability to monitor usage. Below is what we'll cover.
+# Build an API in Rails with Authentication
+
+In this tutorial, we'll build a full-featured API in Rails with authentication. Below is what we'll cover.
 
 - Encrypting API keys.
 - Building a form to view and rotate the API key.
