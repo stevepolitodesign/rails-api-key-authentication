@@ -405,15 +405,11 @@ end
 
 If you use an API client like [Postman](https://www.postman.com/) you can test the API.
 
-<figure>
-  ![successful request](public/images/original/index_success.png)
-  <figcaption>A successful request to the index action.</figcaption>
-</figure>
+![A successful request to the index action](public/images/original/index_success.png)
+_A successful request to the index action._
 
-<figure>
-  ![unsuccessful request](public/images/original/index_failure.png)
-  <figcaption>An unauthorized request to the index action.</figcaption>
-</figure>
+![A non authenticated request to the index action](public/images/original/index_failure.png)
+_A non authenticated request to the index action._
 
 ## Step 9: Authorize Requests.
 
@@ -434,11 +430,13 @@ class Api::V1::PostsController < Api::V1::BaseController
 end
 ```
 
-![image of postman index not authorized]()
+![A unauthorized request to the show action](public/images/original/show_un_authorized.png)
+_A unauthorized request to the show action._
 
 ## Step 10: Handle Invalid Authenticity Token
 
-![image of postman invalid token]()
+![Invalid Authenticity Token is raised when trying to create a post](public/images/original/create_raise.png)
+_Invalid Authenticity Token is raised when trying to create a post_
 
 1. Update Controller.
 
@@ -455,8 +453,8 @@ end
 > - By default, Rails protects any request other than a GET request from Cross-Site Request Forgery (CSRF) attacks by including a token in the rendered HTML for your application. However since we're making a request from outside of the application, Rails will raise a `ActionController::InvalidAuthenticityToken` error. 
 > - We add a call to [protect_from_forgery with: :null_session](https://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection.html) to allow for unverified requests to hit our API. 
 
-
-![image of postman create_success]()
+![A successful POST request](public/images/original/create_success.png)
+_A successful POST request._
 
 ## Step 11: Log API Requests
 
