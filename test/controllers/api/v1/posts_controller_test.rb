@@ -2,7 +2,7 @@ require "test_helper"
 
 class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
   setup do
-    # Using a fixture did not work. Intead, I needed to create a user
+    # Using a fixture did not work. Instead, I needed to create a user
     @user_one = User.create(email: "#{SecureRandom.hex}@example.com", password: "password")
     @user_two = User.create(email: "#{SecureRandom.hex}@example.com", password: "password")
     @user_one_post = @user_one.reload.posts.create(title: "User One Post", body: "Body")
