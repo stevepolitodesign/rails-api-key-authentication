@@ -1,6 +1,10 @@
-![Set Private API Key](public/images/original/api_key_demo.gif)
+In this tutorial we'll build a full featured API in Rails with authentication and the ability to monitor requests.
+
+![A form allowing users to view and rotate their private API key](public/images/original/api_key_demo.gif)
+_A form allowing users to view and rotate their private API key_
 
 ![Authenticated API Demo](public/images/original/api_demo.gif)
+_A demo of the API_
 
 ## Step 1: Add Encrypted Private API Key Column to Users Table
 
@@ -401,7 +405,7 @@ end
 > - Since this controller inherits from `Api::V1::BaseController` all requests will need to be authenticated.
 > - We make sure to always respond with JSON either through our Jbuilder views, or directly in the controller.
 > - We pass any error message to a `message` key in the JSON response. We don't have to call this key `message`, nor do we have to respond with a message at all, but we want to make out API helpful.
-- > We make sure to always respond with the correct [HTTP Status Code](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status).
+> - We make sure to always respond with the correct [HTTP Status Code](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status).
 
 If you use an API client like [Postman](https://www.postman.com/) you can test the API.
 
@@ -548,7 +552,6 @@ an [enum](https://edgeapi.rubyonrails.org/classes/ActiveRecord/Enum.html) column
 >   - We create a validation to limit the requestable_type column to only "Post". This will ensure we keep our records consistently formatted.   
 >   - Note that we set a database constraint on the method and requestable_type columns to prevent null values.
 > - We create a new `Request` request for each action in the `Api::V1::PostsController`. We make sure to pass the correct HTTP request to the `method`.
-
 
 ```
 User.first.requests.count
