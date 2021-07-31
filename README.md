@@ -7,6 +7,7 @@ In this tutorial, we'll build a full-featured API in Rails with authentication a
 - Authorizing requests.
 - Handling missing records.
 - Monitoring API usage.
+- Writing tests for the API.
 
 ![A form allowing users to view and rotate their private API key](public/images/original/form.png)
 _A form allowing users to view and rotate their private API key_
