@@ -362,7 +362,7 @@ json.url api_v1_post_url(post, format: :json)
 
 ## Step 8: Create Endpoints
 
-1. 
+1. Add controller actions and filters.
 
 ```ruby
 # app/controllers/api/v1/posts_controller.rb
