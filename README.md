@@ -526,12 +526,14 @@ class Api::V1::PostsController < Api::V1::BaseController
 end
 ```
 
-
-
 > **What's Going On Here?**
 > 
-> - We make model to store all requests made by the User. To make this as flexible as possible we add
-an [enum](https://edgeapi.rubyonrails.org/classes/ActiveRecord/Enum.html) column to store the request method and a requestable_type column to store the class name of the record in the original API request. This will allow us to see exactly what what type of request was made and on what record. This can be helpful if we need to enforce different usage limits for any combination of request method and for applying different API usage  
+> - We make a model to store all requests made by the User. To make this as flexible as possible we add
+an [enum](https://edgeapi.rubyonrails.org/classes/ActiveRecord/Enum.html) column to store the request method and a requestable_type column to store the class name of the record in the original API request. This will allow us to see exactly what what type of request was made and on what record. This can be helpful if we need to enforce different usage limits for any combination of request method and record type.  
+>   - Note that we add set `_suffix: true` on the enum value. This is because one of the enum values we're setting is `delete`, which is a reserved method name.
+>   - We create a validation to limit the requestable_type column to only "Post". This will ensure we keep our records consistently formatted.   
+>   - Note that we set a database constraint on the method and requestable_type columns to prevent null values.
+> - We create a new `Request` request for each action in the `Api::V1::PostsController`. We make sure to pass the correct HTTP request to the `method`.
 
 
 ```
