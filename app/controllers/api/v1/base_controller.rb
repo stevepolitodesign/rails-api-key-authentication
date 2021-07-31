@@ -1,11 +1,9 @@
 class Api::V1::BaseController < ApplicationController
-  # https://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection.html
   protect_from_forgery with: :null_session
 
   rescue_from ActiveRecord::RecordNotFound, with: :handle_not_found
 
   before_action :authenticate
-
 
   private
 
@@ -13,8 +11,6 @@ class Api::V1::BaseController < ApplicationController
       authenticate_user_with_token || handle_bad_authentication
     end
 
-    # https://github.com/rails/rails/blob/83217025a171593547d1268651b446d3533e2019/actionpack/lib/action_controller/metal/http_authentication.rb#L352
-    # https://www.pluralsight.com/blog/tutorials/token-based-authentication-rails
     def authenticate_user_with_token
       authenticate_with_http_token do |token, options|
         @user ||= User.find_by(private_api_key: token)
