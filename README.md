@@ -408,12 +408,12 @@ If you use an API client like [Postman](https://www.postman.com/) you can test t
 <figure>
   ![successful request](public/images/original/index_success.png)
   <figcaption>A successful request to the index action.</figcaption>
-<figure>
+</figure>
 
 <figure>
   ![unsuccessful request](public/images/original/index_failure.png)
   <figcaption>An unauthorized request to the index action.</figcaption>
-<figure>
+</figure>
 
 ## Step 9: Authorize Requests.
 
